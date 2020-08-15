@@ -9,11 +9,13 @@ const cleanProfileData = require('./cleanProfileData')
 
 const logger = require('../logger')(__filename)
 
-module.exports = async (browser, cookies, url, waitTimeToScrapMs = 500, hasToGetContactInfo = false, puppeteerAuthenticate = undefined) => {
+module.exports = async (browser, cookies, url, waitTimeToScrapMs = 500, timeout = 0, hasToGetContactInfo = false, puppeteerAuthenticate = undefined) => {
   logger.info(`starting scraping url: ${url}`)
 
   const page = await openPage({ browser, cookies, url, puppeteerAuthenticate })
   const profilePageIndicatorSelector = '.pv-profile-section'
+
+  await page.setDefaultNavigationTimeout(timeout)
   await page.waitFor(profilePageIndicatorSelector, { timeout: 5000 })
     .catch(() => {
       //why doesn't throw error instead of continuing scraping?
